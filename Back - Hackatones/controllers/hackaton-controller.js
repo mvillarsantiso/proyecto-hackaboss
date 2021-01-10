@@ -1,8 +1,6 @@
 'use strict';
 
 const Joi = require('joi');
-const ImageExtension = require('joi-image-extension');
-const JoiImage = Joi.extend(ImageExtension);
 const {
   hackatonRepository
 } = require('../repositories');
@@ -27,7 +25,6 @@ async function createHackaton(req, res){
             fin: Joi.date().max('12-31-2022').required(),
             presencial : Joi.boolean(),
             ciudad: Joi.string(),
-            avatar: JoiImage.image().maxDimensions(500, 500),
             max_register: Joi.number().integer().required()
         });
   
@@ -63,7 +60,6 @@ async function updateHackaton(req, res) {
         fin: Joi.date().max('12-31-2022').required(),
         presencial : Joi.boolean(),
         ciudad: Joi.string(),
-        avatar: JoiImage.image().maxDimensions(500, 500),
         max_register: Joi.number().integer().required()
       });
   

@@ -1,0 +1,30 @@
+{
+  "name": "proyecto-hackaboss",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eslintrc.js",
+  "dependencies": {
+    "@sendgrid/mail": "^7.4.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.17.0",
+    "eslint-config-google": "^0.14.0",
+    "express": "^4.17.1",
+    "fs": "^0.0.1-security",
+    "joi": "^17.3.0",
+    "joi-image-extension": "^1.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.2.5",
+    "nodemon": "^2.0.7",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

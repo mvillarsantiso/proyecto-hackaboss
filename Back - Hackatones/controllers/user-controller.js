@@ -22,6 +22,21 @@ async function getUsers(req, res) {
     }
 }
 
+async function getScores(req,res) {
+  try {
+    const scores = await userRepository.getScoresFromUsers();
+
+    res.send(scores);
+  }catch (err) {
+    if(err.name === 'ValidationError'){
+      err.status = 400;
+    }
+    console.log(err);
+    res.status(err.status || 500);
+    res.send({ error: err.message });
+  }
+}
+
 async function register(req, res) {
     try{
       const registerSchema = Joi.object({
@@ -148,6 +163,7 @@ async function getUserInfo(req, res) {
 
 module.exports = {
     getUsers,
+    getScores,
     getUserInfo,
     register,
     login

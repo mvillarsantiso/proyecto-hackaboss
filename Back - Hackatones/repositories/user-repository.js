@@ -37,10 +37,19 @@ async function getUserByNick(nick){
 async function createUser(nombre, apellido1, apellido2, dni, calle, numero, ciudad, nick, pass, bio, avatar, email){
   const pool = await database.getPool();
   const insertQuery = 'INSERT INTO usuario (nombre, apellido1, apellido2, dni, calle, numero, ciudad, nick, pass, bio, avatar, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  console.log(email);
+  //console.log(email);
   const [created] = await pool.query(insertQuery, [nombre, apellido1, apellido2, dni, calle, numero, ciudad, nick, pass, bio, avatar, email]);
 
   return created.insertId;
+}
+
+async function getScoresFromUsers(){
+  const pool = await database.getPool();
+  const query = 'SELECT score FROM usuario ORDER BY score DESC';
+
+  const [scores] = await pool.query(query);
+
+  return scores;
 }
   
 module.exports = {
@@ -48,5 +57,6 @@ module.exports = {
   getUserByEmail,
   getUserById,
   getUserByNick,
-  createUser
+  createUser,
+  getScoresFromUsers
 };

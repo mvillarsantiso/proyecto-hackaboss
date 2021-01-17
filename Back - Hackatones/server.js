@@ -22,6 +22,7 @@ app.use(bodyParser.json());
 app.get('/user-info/:userId', validateAuth, userController.getUserInfo);
 
 app.get('/users', validateAuth, userController.getUsers);
+app.get('/users/score', userController.getScores)
 app.post('/users/login', userController.login);
 app.post('/users/register', userController.register);
 

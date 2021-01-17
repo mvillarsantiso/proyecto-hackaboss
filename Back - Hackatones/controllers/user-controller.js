@@ -3,9 +3,9 @@
 const bcrypt = require('bcryptjs');
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
-const sengrid = require('@sendgrid/mail');
+// const sengrid = require('@sendgrid/mail');
 
-const userRepository = require('../repositories');
+const { userRepository } = require('../repositories');
 
 async function getUsers(req, res) {
     try {
@@ -26,19 +26,25 @@ async function register(req, res) {
     try{
       const registerSchema = Joi.object({
         nombre: Joi.string().required(),
-        primerApellido: Joi.string().required(),
-        segundoApellido: Joi.string().required(),
+        apellido1: Joi.string().required(),
+        apellido2: Joi.string().required(),
         dni: Joi.string().min(9).max(9).required(),
+        calle: Joi.string().optional(),
+        numero: Joi.number().optional(),
+        ciudad: Joi.string().optional(),
         nick: Joi.string().alphanum().min(6).max(15).required(),
+        password: Joi.string().min(4).max(20).required(),
+        bio: Joi.string().max(500).optional(),
+        score: Joi.number().integer().optional(),
+        avatar: Joi.optional(),
         email: Joi.string().email().required(),
         repeatEmail: Joi.ref('email'),
-        password: Joi.string().min(4).max(20).required(),
         repeatPassword: Joi.ref('password'),
       });
   
       await registerSchema.validateAsync(req.body);
   
-      const { nombre, primerApellido, segundoApellido, dni, nick, email, password } = req.body;
+      const { nombre, apellido1, apellido2, dni, calle, numero, ciudad, nick, password, bio, score, avatar, email} = req.body;
   
       const userEmail = await userRepository.getUserByEmail(email);
       const userNick = await userRepository.getUserByNick(nick);
@@ -54,18 +60,18 @@ async function register(req, res) {
       }
   
       const passwordHash = await bcrypt.hash(password, 10);
-      const id = await userRepository.createUser(nombre, primerApellido, segundoApellido, dni, nick, email, passwordHash, 'reader');
+      const id = await userRepository.createUser( nombre, apellido1, apellido2, dni, calle, numero, ciudad, nick, passwordHash, bio, score, avatar, email);
   
       
-      sengrid.setApiKey(process.env.SENDGRID_KEY);
-      const data = {
-        from: process.env.SENDGRID_MAIL_FROM,
-        to: email,
-        subject: 'WorldofHackaton',
-        text: `Hola ${nombre}.\n<strong>Bienvenido a WorldofHackaton.\n`,
-        html: `Hola ${nombre}.\n<strong>Bienvenido a WorldofHackaton.\n`
-      };
-      await sengrid.send(data);
+      // sengrid.setApiKey(process.env.SENDGRID_KEY);
+      // const data = {
+      //   from: process.env.SENDGRID_MAIL_FROM,
+      //   to: email,
+      //   subject: 'WorldofHackaton',
+      //   text: `Hola ${nombre}.\n<strong>Bienvenido a WorldofHackaton.\n`,
+      //   html: `Hola ${nombre}.\n<strong>Bienvenido a WorldofHackaton.\n`
+      // };
+      // await sengrid.send(data);
   
       return res.send({ userId: id });
     }catch(err){
@@ -96,8 +102,8 @@ async function login(req, res) {
         throw error;
       }
 
-
-      const isValidPassword = await bcrypt.compare(password, user.password);
+        console.log(user);
+      const isValidPassword = await bcrypt.compare(password, user.pass);
   
       if (!isValidPassword) {
         const error = new Error('El password no es válido');

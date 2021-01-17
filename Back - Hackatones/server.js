@@ -26,9 +26,9 @@ app.post('/users/login', userController.login);
 app.post('/users/register', userController.register);
 
 
-app.get('/hackatones', validateAuth, hackatonController.getHackaton);
-app.post('/hackaton/create', hackatonController.createHackaton);
-app.post('/hackaton/:hackatonId/update', hackatonController.updateHackaton);
+app.get('/hackatones', hackatonController.getHackaton);
+app.post('/hackaton/create', validateAuth, hackatonController.createHackaton);
+app.post('/hackaton/:hackatonId/update', validateAuth, hackatonController.updateHackaton);
 
 
 

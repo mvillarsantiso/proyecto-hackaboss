@@ -20,18 +20,18 @@ async function createHackaton(req, res){
     try{
         const schema = Joi.object({
             nombre: Joi.string().alphanum().min(5).max(50).required(),
+            presencial : Joi.boolean(),
+            ciudad: Joi.string(),
             contenido: Joi.string().max(800).required(),
             inicio: Joi.date().greater('now').required(),
             fin: Joi.date().max('12-31-2022').required(),
-            presencial : Joi.boolean(),
-            ciudad: Joi.string(),
             max_register: Joi.number().integer().required()
         });
   
         await schema.validateAsync(req.body);
       
-        const idCreado = await hackatonRepository.createHackaton(req.body.nombre,
-            req.body.contenido, req.body.inicio, req.body.fin, req.body.presencial, req.body.ciudad, req.body.avatar, req.body.max_register);
+        const idCreado = await hackatonRepository.createHackaton(req.body.nombre, req.body.presencial, req.body.ciudad,
+            req.body.contenido, req.body.inicio, req.body.fin, req.body.avatar, req.body.max_register);
   
         const hackaton = await hackatonRepository.getHackatonById(idCreado);
   
@@ -50,20 +50,20 @@ async function updateHackaton(req, res) {
     try {
   
       const { hackatonId } = req.params;    
-      const { nombre, contenido, inicio, fin, presencial, ciudad, avatar, max_register } = req.body;
-  
+      const { nombre, presencial, ciudad, contenido, inicio, fin, max_register } = req.body;
+
       const schema = Joi.object({
         hackatonId: Joi.number().positive().required(),
         nombre: Joi.string().alphanum().min(5).max(50).required(),
+        presencial : Joi.boolean(),
+        ciudad: Joi.string(),
         contenido: Joi.string().max(800).required(),
         inicio: Joi.date().greater('now').required(),
         fin: Joi.date().max('12-31-2022').required(),
-        presencial : Joi.boolean(),
-        ciudad: Joi.string(),
         max_register: Joi.number().integer().required()
       });
   
-      await schema.validateAsync({ hackatonId, nombre, contenido, inicio, fin, presencial, ciudad, avatar, max_register});
+      await schema.validateAsync({ hackatonId, nombre, presencial, ciudad, contenido, inicio, fin, max_register});
   
       const hackaton = await hackatonRepository.getHackatonById(hackatonId);
   
@@ -72,8 +72,8 @@ async function updateHackaton(req, res) {
         return res.send({ error: 'Hackaton no encontrado.' });
       }
   
-      await hackatonRepository.updateHackatone(nombre, contenido, inicio, fin, presencial, ciudad, avatar, max_register, hackaton);
-      const hackatonUpdated = await hackatonRepository.getHackatonById(hackaton);
+      await hackatonRepository.updateHackaton(nombre, presencial, ciudad, contenido, inicio, fin, max_register, hackaton.id);
+      const hackatonUpdated = await hackatonRepository.getHackatonById(hackaton.id);
   
       res.send(hackatonUpdated);
     } catch (err) {

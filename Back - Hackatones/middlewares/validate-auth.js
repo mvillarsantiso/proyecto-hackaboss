@@ -15,7 +15,7 @@ function validateAuth (req, res, next){
   }catch(error) {
     console.log(error);
     res.status(401);
-    res.send('Tienes que estar loggeado');
+    res.json({error: 'Tienes que estar loggeado'});
   }
 }
 

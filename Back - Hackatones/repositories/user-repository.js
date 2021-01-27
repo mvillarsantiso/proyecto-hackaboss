@@ -34,23 +34,23 @@ async function getUserByNick(nick){
   return usuario[0];
 }
 
-async function createUser(nombre, apellido1, apellido2, dni, calle, numero, ciudad, nick, pass, bio, avatar, email){
+async function createUser(nombre, apellido1, apellido2, dni, nick, pass, avatar, email){
   const pool = await database.getPool();
-  const insertQuery = 'INSERT INTO usuario (nombre, apellido1, apellido2, dni, calle, numero, ciudad, nick, pass, bio, avatar, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  //console.log(email);
-  const [created] = await pool.query(insertQuery, [nombre, apellido1, apellido2, dni, calle, numero, ciudad, nick, pass, bio, avatar, email]);
+  const insertQuery = 'INSERT INTO usuario (nombre, apellido1, apellido2, dni, nick, pass, avatar, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+  console.log(email);
+  const [created] = await pool.query(insertQuery, [nombre, apellido1, apellido2, dni, nick, pass, avatar, email]);
 
   return created.insertId;
 }
 
-async function getScoresFromUsers(){
-  const pool = await database.getPool();
-  const query = 'SELECT score FROM usuario ORDER BY score DESC';
+// async function getScoresFromUsers(){
+//   const pool = await database.getPool();
+//   const query = 'SELECT score FROM usuario ORDER BY score DESC';
 
-  const [scores] = await pool.query(query);
+//   const [scores] = await pool.query(query);
 
-  return scores;
-}
+//   return scores;
+// }
   
 module.exports = {
   getUsers,
@@ -58,5 +58,4 @@ module.exports = {
   getUserById,
   getUserByNick,
   createUser,
-  getScoresFromUsers
 };

@@ -1,9 +1,8 @@
 'use strict';
 
 const Joi = require('joi');
-const {
-  hackatonRepository
-} = require('../repositories');
+const { hackatonRepository } = require('../repositories');
+
 
 async function getHackaton(req, res) {
   try {
@@ -12,7 +11,19 @@ async function getHackaton(req, res) {
   } catch (err) {
     console.log(err);
     res.status(err.status || 500);
-    res.send({ error: err.message });
+    res.json({ err: err.message });
+  }
+}
+
+async function getHackatonById(req, res) {
+  try{
+    const hackatonId = await hackatonRepository.getHackatonById();
+    res.send(hackatonId)
+
+  }catch(err){
+    console.log(err);
+    res.status(err.status || 500);
+    res.json({ err: err.message });
   }
 }
 
@@ -27,10 +38,14 @@ async function createHackaton(req, res){
             fin: Joi.date().max('12-31-2022').required(),
             max_register: Joi.number().integer().required()
         });
-  
+
         await schema.validateAsync(req.body);
+
+        const avatar = typeof req.files['avatar'] !== "undefined" ? req.files['avatar'][0].filename : '';
+
+        await req.checkBody('avatar').isImage(avatar);
       
-        const idCreado = await hackatonRepository.createHackaton(req.body.nombre, req.body.presencial, req.body.ciudad,
+        const idCreado = await hackatonRepository.createHackaton(req.body.nombre, req.body.presencial, req.body.ciudad, req.body.id_tech,
             req.body.contenido, req.body.inicio, req.body.fin, req.body.avatar, req.body.max_register);
   
         const hackaton = await hackatonRepository.getHackatonById(idCreado);
@@ -42,7 +57,7 @@ async function createHackaton(req, res){
             err.status = 400;
         }
         res.status(err.status || 500);
-        res.send({ error: err.message });
+        res.json({ error: err.message });
     }
 }
 
@@ -50,7 +65,7 @@ async function updateHackaton(req, res) {
     try {
   
       const { hackatonId } = req.params;    
-      const { nombre, presencial, ciudad, contenido, inicio, fin, max_register } = req.body;
+      const { nombre, presencial, ciudad, id_tech, contenido, inicio, fin, max_register } = req.body;
 
       const schema = Joi.object({
         hackatonId: Joi.number().positive().required(),
@@ -63,16 +78,20 @@ async function updateHackaton(req, res) {
         max_register: Joi.number().integer().required()
       });
   
-      await schema.validateAsync({ hackatonId, nombre, presencial, ciudad, contenido, inicio, fin, max_register});
+      await schema.validateAsync({ hackatonId, nombre, presencial, ciudad, id_tech, contenido, inicio, fin, max_register});
+
+      const avatar = typeof req.files['avatar'] !== "undefined" ? req.files['avatar'][0].filename : '';
+
+      await req.checkBody('avatar').isImage(avatar);
   
       const hackaton = await hackatonRepository.getHackatonById(hackatonId);
   
       if (!hackaton) {
         res.status(404);
-        return res.send({ error: 'Hackaton no encontrado.' });
+        return res.json({ error: 'Hackaton no encontrado.' });
       }
   
-      await hackatonRepository.updateHackaton(nombre, presencial, ciudad, contenido, inicio, fin, max_register, hackaton.id);
+      await hackatonRepository.updateHackaton(nombre, presencial, ciudad, id_tech, contenido, inicio, fin, max_register, hackaton.id);
       const hackatonUpdated = await hackatonRepository.getHackatonById(hackaton.id);
   
       res.send(hackatonUpdated);
@@ -82,12 +101,13 @@ async function updateHackaton(req, res) {
       }
       console.log(err);
       res.status(err.status || 500);
-      res.send({ error: err.message });
+      res.json({ error: err.message });
     }
 }
 
 module.exports = {
     getHackaton,
+    getHackatonById,
     createHackaton,
     updateHackaton
 };

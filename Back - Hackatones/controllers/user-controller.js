@@ -18,24 +18,24 @@ async function getUsers(req, res) {
       }
       console.log(err);
       res.status(err.status || 500);
-      res.send({ error: err.message });
+      res.json({ error: err.message });
     }
 }
 
-async function getScores(req,res) {
-  try {
-    const scores = await userRepository.getScoresFromUsers();
+// async function getScores(req,res) {
+//   try {
+//     const scores = await userRepository.getScoresFromUsers();
 
-    res.send(scores);
-  }catch (err) {
-    if(err.name === 'ValidationError'){
-      err.status = 400;
-    }
-    console.log(err);
-    res.status(err.status || 500);
-    res.send({ error: err.message });
-  }
-}
+//     res.send(scores);
+//   }catch (err) {
+//     if(err.name === 'ValidationError'){
+//       err.status = 400;
+//     }
+//     console.log(err);
+//     res.status(err.status || 500);
+//     res.send({ error: err.message });
+//   }
+// }
 
 async function register(req, res) {
     try{
@@ -44,38 +44,35 @@ async function register(req, res) {
         apellido1: Joi.string().required(),
         apellido2: Joi.string().required(),
         dni: Joi.string().min(9).max(9).required(),
-        calle: Joi.string().optional(),
-        numero: Joi.number().optional(),
-        ciudad: Joi.string().optional(),
         nick: Joi.string().alphanum().min(6).max(15).required(),
         password: Joi.string().min(4).max(20).required(),
-        bio: Joi.string().max(500).optional(),
-        score: Joi.number().integer().optional(),
-        avatar: Joi.optional(),
         email: Joi.string().email().required(),
         repeatEmail: Joi.ref('email'),
         repeatPassword: Joi.ref('password'),
       });
   
       await registerSchema.validateAsync(req.body);
+
+      const avatar = typeof req.files['avatar'] !== "undefined" ? req.files['avatar'][0].filename : '';
+
+      await req.checkBody('avatar').isImage(avatar);
   
-      const { nombre, apellido1, apellido2, dni, calle, numero, ciudad, nick, password, bio, score, avatar, email} = req.body;
-  
+      const { nombre, apellido1, apellido2, dni, nick, password, email} = req.body;
       const userEmail = await userRepository.getUserByEmail(email);
       const userNick = await userRepository.getUserByNick(nick);
   
       if (userEmail) {
-        const error = new Error('Ya existe un usuario con ese email');
+        const error = new Error({error: 'Ya existe un usuario con ese email'});
         error.status = 409;
         throw error;
       }else if (userNick) {
-        const error = new Error('Ya existe un usuario con ese nick');
+        const error = new Error({error: 'Ya existe un usuario con ese nick'});
         error.status = 409;
         throw error;
       }
-  
+      
       const passwordHash = await bcrypt.hash(password, 10);
-      const id = await userRepository.createUser( nombre, apellido1, apellido2, dni, calle, numero, ciudad, nick, passwordHash, bio, score, avatar, email);
+      const id = await userRepository.createUser( nombre, apellido1, apellido2, dni, nick, passwordHash, avatar, email);
   
       
       // sengrid.setApiKey(process.env.SENDGRID_KEY);
@@ -95,7 +92,7 @@ async function register(req, res) {
       }
       console.log(err);
       res.status(err.status || 500);
-      res.send({ error: err.message });
+      res.json({ error: err.message });
     }
 }
 
@@ -112,7 +109,7 @@ async function login(req, res) {
 
       const user = await userRepository.getUserByEmail(email);
       if (!user) {
-        const error = new Error('No existe el usuario con ese email');
+        const error = new Error({error: 'No existe el usuario con ese email'});
         error.code = 404;
         throw error;
       }
@@ -121,7 +118,7 @@ async function login(req, res) {
       const isValidPassword = await bcrypt.compare(password, user.pass);
   
       if (!isValidPassword) {
-        const error = new Error('El password no es válido');
+        const error = new Error({error: 'El password no es válido'});
         error.code = 401;
         throw error;
       }
@@ -141,7 +138,7 @@ async function login(req, res) {
       }
       console.log(err);
       res.status(err.status || 500);
-      res.send({ error: err.message });
+      res.json({ error: err.message });
     }
 }
 
@@ -157,13 +154,12 @@ async function getUserInfo(req, res) {
       }
       console.log(err);
       res.status(err.status || 500);
-      res.send({ error: err.message });
+      res.json({ error: err.message });
     }
 }
 
 module.exports = {
     getUsers,
-    getScores,
     getUserInfo,
     register,
     login

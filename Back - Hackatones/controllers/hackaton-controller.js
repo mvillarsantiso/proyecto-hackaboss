@@ -35,7 +35,6 @@ async function createHackaton(req, res){
     }
 
     try{
-        const { userId } = req.params;
 
         const schema = Joi.object({
             nombre: Joi.string().alphanum().min(5).max(50).required(),
@@ -51,7 +50,7 @@ async function createHackaton(req, res){
         await schema.validateAsync(req.body);
       
         const idCreado = await hackatonRepository.createHackaton(req.body.nombre, req.body.presencial, req.body.ciudad,
-            req.body.contenido, userId, req.body.id_tech, req.body.inicio, req.body.fin, req.body.avatar, req.body.max_register);
+            req.body.contenido, req.body.id_tech, req.body.inicio, req.body.fin, req.body.max_register);
   
         const hackaton = await hackatonRepository.getHackatonById(idCreado);
   
@@ -75,7 +74,7 @@ async function updateHackaton(req, res) {
     try {
       
       const { hackatonId } = req.params;
-      const { nombre, presencial, ciudad, contenido, id_user, id_tech, inicio, fin, avatar, max_register } = req.body;
+      const { nombre, presencial, ciudad, contenido, id_tech, inicio, fin, max_register } = req.body;
 
       const schema = Joi.object({
         hackatonId: Joi.number().positive().required(),
@@ -89,7 +88,7 @@ async function updateHackaton(req, res) {
         max_register: Joi.number().integer().required()
       });
   
-      await schema.validateAsync({ hackatonId, nombre, presencial, ciudad, contenido, id_user, id_tech, inicio, fin, max_register});
+      await schema.validateAsync({ hackatonId, nombre, presencial, ciudad, contenido, id_tech, inicio, fin, max_register});
   
       const hackaton = await hackatonRepository.getHackatonById(hackatonId);
   
@@ -98,7 +97,7 @@ async function updateHackaton(req, res) {
         return res.json({ err: 'Hackaton no encontrado.' });
       }
   
-      await hackatonRepository.updateHackaton(nombre, presencial, ciudad, contenido, id_user, id_tech, inicio, fin, avatar, max_register, hackaton.id);
+      await hackatonRepository.updateHackaton(nombre, presencial, ciudad, contenido, id_tech, inicio, fin, max_register, hackaton.id);
       const hackatonUpdated = await hackatonRepository.getHackatonById(hackaton.id);
   
       res.send(hackatonUpdated);

@@ -67,18 +67,18 @@ async function getHackatonByEndDate(fin){
     return date[0];
 }
 
-async function createHackaton(nombre, presencial, ciudad, contenido, id_user, id_tech, inicio, fin, avatar, max_register){
+async function createHackaton(nombre, presencial, ciudad, contenido, id_tech, inicio, fin, max_register){
     const pool = await database.getPool();
-    const insertQuery = 'INSERT INTO hackaton (nombre, presencial, ciudad, contenido, id_user, id_tech, inicio, fin, avatar, max_register ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const [created] = await pool.query(insertQuery, [nombre, presencial, ciudad, contenido, id_user, id_tech, inicio, fin, avatar, max_register]);
+    const insertQuery = 'INSERT INTO hackaton (nombre, presencial, ciudad, contenido, id_tech, inicio, fin, max_register ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    const [created] = await pool.query(insertQuery, [nombre, presencial, ciudad, contenido, id_tech, inicio, fin, max_register]);
   
     return created.insertId;
 }
 
-async function updateHackaton(nombre, presencial, ciudad, contenido, id_user, id_tech, inicio, fin, avatar, max_register, id){
+async function updateHackaton(nombre, presencial, ciudad, contenido, id_tech, inicio, fin, max_register, id){
     const pool = await database.getPool();
-    const updateQuery = 'UPDATE hackaton SET nombre = ?, presencial = ?, ciudad = ?, contenido = ?, id_user = ?, id_tech = ? inicio = ?, fin = ?, avatar = ?, max_register = ? WHERE id = ?';
-    await pool.query(updateQuery, [nombre, presencial, ciudad, contenido, id_user, id_tech, inicio, fin, avatar, max_register, id]);
+    const updateQuery = 'UPDATE hackaton SET nombre = ?, presencial = ?, ciudad = ?, contenido = ?, id_tech = ?, inicio = ?, fin = ?, max_register = ? WHERE id = ?';
+    await pool.query(updateQuery, [nombre, presencial, ciudad, contenido, id_tech, inicio, fin, max_register, id]);
   
     return true;
 }

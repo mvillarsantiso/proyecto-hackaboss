@@ -29,7 +29,7 @@ app.post('/user/:userId/update', validateAuth, userController.updateUser);
 
 app.get('/hackatones', hackatonController.getHackaton);
 app.get('/hackaton/:hackatonId', hackatonController.getHackatonById);
-app.post('/hackaton/:userId/create', validateAuth, hackatonController.createHackaton);
+app.post('/hackaton/create', validateAuth, hackatonController.createHackaton);
 app.post('/hackaton/:hackatonId/update', validateAuth, hackatonController.updateHackaton);
 app.post('/hackaton/:hackatonId/:userId/register', validateAuth, hackatonController.registerToHackaton);
 
@@ -38,5 +38,6 @@ app.get('/noticias/:noticiaId', newsController.getNewsById);
 app.post('/noticias/create', validateAuth, newsController.createNew);
 
 // avatar ??
+// desapuntarse hackaton
 
 app.listen(SERVER_PORT, () => console.log(`Escuchando ${SERVER_PORT}`));

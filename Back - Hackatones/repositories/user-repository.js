@@ -34,23 +34,21 @@ async function getUserByNick(nick){
   return usuario[0];
 }
 
-async function createUser(nombre, apellido1, apellido2, dni, nick, pass, avatar, email){
+async function createUser(nombre, apellido1, apellido2, dni, nick, pass, avatar, email, role){
   const pool = await database.getPool();
-  const insertQuery = 'INSERT INTO usuario (nombre, apellido1, apellido2, dni, nick, pass, avatar, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-  console.log(email);
-  const [created] = await pool.query(insertQuery, [nombre, apellido1, apellido2, dni, nick, pass, avatar, email]);
+  const insertQuery = 'INSERT INTO usuario (nombre, apellido1, apellido2, dni, nick, pass, avatar, email, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const [created] = await pool.query(insertQuery, [nombre, apellido1, apellido2, dni, nick, pass, avatar, email, role]);
 
   return created.insertId;
 }
 
-// async function getScoresFromUsers(){
-//   const pool = await database.getPool();
-//   const query = 'SELECT score FROM usuario ORDER BY score DESC';
+async function updateUser(nombre, apellido1, apellido2, dni, nick, pass, avatar, email, role, id){
+  const pool = await database.getPool();
+  const updateQuery = 'UPDATE usuario SET nombre = ?, apellido1 = ?, apellido2 = ?, dni = ?, nick = ?, pass = ?, avatar = ?, email = ?, role = ? WHERE id = ?';
+  await pool.query(updateQuery, [nombre, apellido1, apellido2, dni, nick, pass, avatar, email, role, id]);
 
-//   const [scores] = await pool.query(query);
-
-//   return scores;
-// }
+  return true;
+}
   
 module.exports = {
   getUsers,
@@ -58,4 +56,5 @@ module.exports = {
   getUserById,
   getUserByNick,
   createUser,
+  updateUser
 };

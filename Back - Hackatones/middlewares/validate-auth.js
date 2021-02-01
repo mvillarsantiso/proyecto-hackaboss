@@ -8,9 +8,9 @@ function validateAuth (req, res, next){
     const token = req.headers.authorization;
     const decodedToken = jwt.verify(token, JWT_SECRET);
     console.log(decodedToken);
-    const { id, name } = decodedToken;
+    const { id, name, role } = decodedToken;
     
-    req.auth = { id, name };
+    req.auth = { id, name, role};
     next();
   }catch(error) {
     console.log(error);

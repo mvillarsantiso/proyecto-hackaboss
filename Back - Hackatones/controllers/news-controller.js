@@ -16,8 +16,9 @@ async function getNews(req, res) {
 }
 
 async function getNewsById(req, res) {
+    const id = req.params.noticiaId;
     try{
-        const noticiaId = await newsRepository.getNewsById();
+        const noticiaId = await newsRepository.getNewsById(id);
         res.send(noticiaId);
 
     }catch(err){
@@ -28,18 +29,25 @@ async function getNewsById(req, res) {
 }
 
 async function createNew(req, res){
+    
+    if(req.auth.role !== "ADMIN") {
+        res.status(403);
+        return res.json({err: "Insufficient privileges"})
+    }
+
     try{
         const schema = Joi.object({
             titular: Joi.string().alphanum().min(5).max(50).required(),
             contenido: Joi.string().max(5000).required(),
-            f_publicacion: Joi.date().greater('now').max('12-31-2022').required()
         });
 
         await schema.validateAsync(req.body);
 
-        const idCreado = await newsRepository.createNew(req.body.titular, req.body.contenido, req.body.f_publicacion);
+        const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        const noticia = await newsRepository.createNewç(idCreado)
+        const idCreado = await newsRepository.createNew(req.body.titular, req.body.contenido, now);
+
+        const noticia = await newsRepository.getNewsById(idCreado)
 
         res.send(noticia);
 

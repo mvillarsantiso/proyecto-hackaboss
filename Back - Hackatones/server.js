@@ -21,24 +21,22 @@ const {
 app.use(bodyParser.json());
 
 app.get('/user-info/:userId', validateAuth, userController.getUserInfo);
-
 app.get('/users', validateAuth, userController.getUsers);
-app.get('/users/ranking', userController.getScores)
 app.post('/users/login', userController.login);
 app.post('/users/register', userController.register);
+app.post('/user/:userId/update', validateAuth, userController.updateUser);
 
 
 app.get('/hackatones', hackatonController.getHackaton);
-app.get('./hackaton/:hackatonId', hackatonController.getHackatonById);
-app.post('/hackaton/create', validateAuth, hackatonController.createHackaton);
+app.get('/hackaton/:hackatonId', hackatonController.getHackatonById);
+app.post('/hackaton/:userId/create', validateAuth, hackatonController.createHackaton);
 app.post('/hackaton/:hackatonId/update', validateAuth, hackatonController.updateHackaton);
+app.post('/hackaton/:hackatonId/:userId/register', validateAuth, hackatonController.registerToHackaton);
 
 app.get('/noticias', newsController.getNews);
 app.get('/noticias/:noticiaId', newsController.getNewsById);
-app.post('/noticias/create', newsController.createNew);
+app.post('/noticias/create', validateAuth, newsController.createNew);
 
 // avatar ??
-// apuntarte hackaton
-
 
 app.listen(SERVER_PORT, () => console.log(`Escuchando ${SERVER_PORT}`));

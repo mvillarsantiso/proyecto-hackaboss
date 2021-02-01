@@ -11,11 +11,11 @@ async function getNews() {
     return noticia
 }
 
-async function getNewsById() {
+async function getNewsById(id) {
     const pool = await database.getPool();
     const query = 'SELECT * FROM noticias WHERE id = ?'
 
-    const [noticia] = await pool.query(query)
+    const [noticia] = await pool.query(query, id)
 
     return noticia[0]
 }

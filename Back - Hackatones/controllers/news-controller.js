@@ -43,7 +43,8 @@ async function createNew(req, res){
 
         await schema.validateAsync(req.body);
 
-        const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        //const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        const now  = new Date();
 
         const idCreado = await newsRepository.createNew(req.body.titular, req.body.contenido, now);
 

@@ -56,7 +56,7 @@ async function updateUser(nombre, apellido1, apellido2, dni, nick, email, id){
   return true;
 }
 
-async function updateUserPass(pass, id) {
+async function updateUserPass(pass, id){
   const pool = await database.getPool();
 
   const updateQuery = 'UPDATE usuario SET pass = ? WHERE id = ?';
@@ -65,25 +65,42 @@ async function updateUserPass(pass, id) {
   return true;
 }
 
-async function uploadAvatar(file) {
-  //Crear o directorio uploads si no existe
+async function uploadAvatar(file){
+
   const uploadsPath = path.join(__dirname, '..', process.env.UPLOADS_DIR);
   await ensureDir(uploadsPath);
 
-  //Leer imaxe
-  const image = sharp(file.data)
 
-  //cambiar o tamaño
+  const image = sharp(file.data);
+
+
   const avatarSize = Number(process.env.AVATAR_SIZE);
   image.resize(avatarSize,avatarSize);
 
-  //Xenerar un nome aleatorio para a imaxe
+
   const avatarFileName = `${uuid.v4()}.jpg`;
 
-  //Gardala no directorio uploads
+
   await image.toFile(path.join(uploadsPath, avatarFileName));
 
-  //devolver a ruta
+
+  return avatarFileName;
+}
+
+async function updateAvatar(file){
+
+  const uploadsPath = path.join(__dirname, '..', process.env.UPLOADS_DIR);
+  await ensureDir(uploadsPath);
+
+  const image = sharp(file.data);
+
+  const avatarSize = Number(process.env.AVATAR_SIZE);
+  image.resize(avatarSize, avatarSize);
+
+  const avatarFileName = `${uuid.v4()}.jpg`;
+
+  await image.toFile(path.join(uploadsPath, avatarFileName));
+
   return avatarFileName;
 }
   
@@ -95,5 +112,6 @@ module.exports = {
   createUser,
   updateUser,
   updateUserPass,
-  uploadAvatar
+  uploadAvatar,
+  updateAvatar
 };

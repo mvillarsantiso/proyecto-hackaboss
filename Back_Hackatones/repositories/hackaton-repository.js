@@ -91,6 +91,22 @@ async function registerToHackaton(id_user, id_hack, c_reserva){
     return register;
 }
 
+async function getCodeFromRegistration(id_user, id_hack){
+    const pool = await database.getPool();
+    const query = 'SELECT c_reserva FROM usuario_apuntado_a_hackaton WHERE id_user = ? AND id_hack = ?'
+    const [code] = await pool.query(query, [id_user, id_hack]);
+
+    return code[0].c_reserva;
+}
+
+async function unsubscribeToHackaton(c_reserva){
+    const pool = await database.getPool();
+    const query = 'DELETE FROM usuario_apuntado_a_hackaton WHERE c_reserva = ?'
+    await pool.query(query, [c_reserva]);
+
+    return true
+}
+
 module.exports = {
     getHackaton,
     getHackatonById,
@@ -102,6 +118,7 @@ module.exports = {
     getHackatonByEndDate,
     createHackaton,
     updateHackaton,
-    registerToHackaton
-
+    registerToHackaton,
+    getCodeFromRegistration,
+    unsubscribeToHackaton
 };

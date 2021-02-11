@@ -229,36 +229,29 @@ async function updateUser(req, res) {
 
 async function updateUserPass (req, res) {
   try {
-    const {userId} = req.params;
+    const { userId } = req.params;
 
-    //Comprobamos que estamos cambiando la password a nuestro usuario
     if(Number(userId) !== req.auth.id) {
       const error = new Error('No puedes cambiar la password a otro usuario');
       error.status = 401;
       throw error;
     }
 
-    //Sacamos a info do body
-    const {password, newPassword} = req.body;
+    const { password, newPassword}  = req.body;
 
-    //Sacamos a información do usuario actual da base de datos
     const user = await userRepository.getUserById(userId);
 
     const isValidPassword = await bcrypt.compare(password, user.pass);
 
     if (!isValidPassword) {
-      const error = new Error({ err: "El password antiguo no es válido" });
+      const error = new Error('El password antiguo no es válido');
       error.status = 401;
       throw error;
     }
 
-    //Encriptamos a nova password
     const newPasswordHash = await bcrypt.hash(newPassword, 10);
 
-    //Actualizamos a pass
     await userRepository.updateUserPass(newPasswordHash, userId);
-
-    //Enviamos resposta
 
     res.send({
       status: 'ok',
@@ -276,11 +269,56 @@ async function updateUserPass (req, res) {
   }
 }
 
+async function uploadAvatar(req, res) {
+
+  try{
+    let avatarFileName;
+
+    if(req.files && req.files.avatar) {
+      avatarFileName = await userRepository.uploadAvatar(req.files.avatar);
+    }
+
+    res.send({ file: avatarFileName});
+
+  }catch (err) {
+    if (err.name === "ValidationError") {
+      err.status = 400;
+    }
+    console.log(err);
+    res.status(err.status || 500);
+    res.json({ error: err.message });
+  }
+}
+
+async function updateAvatar(req, res) {
+
+  try{
+    let avatarFileName;
+
+
+    if(req.files && req.files.avatar) {
+      avatarFileName = await userRepository.uploadAvatar(req.files.avatar);
+    }
+
+    res.send({ file: avatarFileName});
+
+  }catch (err) {
+    if (err.name === "ValidationError") {
+      err.status = 400;
+    }
+    console.log(err);
+    res.status(err.status || 500);
+    res.json({ error: err.message });
+  }
+}
+
 module.exports = {
   getUsers,
   getUserInfo,
   register,
   login,
   updateUser,
-  updateUserPass
+  updateUserPass,
+  uploadAvatar,
+  updateAvatar
 };

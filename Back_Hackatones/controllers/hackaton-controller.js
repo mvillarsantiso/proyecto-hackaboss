@@ -127,10 +127,26 @@ async function registerToHackaton(req, res) {
   }
 }
 
+async function unsubscribeToHackaton(req, res) {
+  try{
+    const { userId, hackatonId } = req.params;
+    const code = await hackatonRepository.getCodeFromRegistration(userId, hackatonId);
+
+    await hackatonRepository.unsubscribeToHackaton(code);
+
+    res.send({ message: 'Te has desapuntado del hackaton'})
+  }catch(err){
+    console.log(err);
+    res.status(err.status || 500);
+    res.json({ err: err.message})
+  }
+}
+
 module.exports = {
     getHackaton,
     getHackatonById,
     createHackaton,
     updateHackaton,
-    registerToHackaton
+    registerToHackaton,
+    unsubscribeToHackaton
 };

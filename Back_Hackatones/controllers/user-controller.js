@@ -65,7 +65,7 @@ async function register(req, res) {
 
     let avatarFileName;
 
-    if(req.files && req.files.avatar) {
+    if (req.files && req.files.avatar) {
       avatarFileName = await userRepository.uploadAvatar(req.files.avatar);
     }
 
@@ -141,7 +141,7 @@ async function login(req, res) {
       expiresIn: "30d",
     });
 
-    res.send({ token: token });
+    res.send({ token: token, user: user });
   } catch (err) {
     if (err.name === "ValidationError") {
       err.status = 400;
@@ -154,6 +154,7 @@ async function login(req, res) {
 
 async function getUserInfo(req, res) {
   try {
+    console.log(req)
     const userId = req.auth.id;
     const user = await userRepository.getUserById(userId);
 
@@ -227,17 +228,17 @@ async function updateUser(req, res) {
   }
 }
 
-async function updateUserPass (req, res) {
+async function updateUserPass(req, res) {
   try {
     const { userId } = req.params;
 
-    if(Number(userId) !== req.auth.id) {
+    if (Number(userId) !== req.auth.id) {
       const error = new Error('No puedes cambiar la password a otro usuario');
       error.status = 401;
       throw error;
     }
 
-    const { password, newPassword}  = req.body;
+    const { password, newPassword } = req.body;
 
     const user = await userRepository.getUserById(userId);
 
@@ -271,16 +272,16 @@ async function updateUserPass (req, res) {
 
 async function uploadAvatar(req, res) {
 
-  try{
+  try {
     let avatarFileName;
 
-    if(req.files && req.files.avatar) {
+    if (req.files && req.files.avatar) {
       avatarFileName = await userRepository.uploadAvatar(req.files.avatar);
     }
 
-    res.send({ file: avatarFileName});
+    res.send({ file: avatarFileName });
 
-  }catch (err) {
+  } catch (err) {
     if (err.name === "ValidationError") {
       err.status = 400;
     }
@@ -292,17 +293,17 @@ async function uploadAvatar(req, res) {
 
 async function updateAvatar(req, res) {
 
-  try{
+  try {
     let avatarFileName;
 
 
-    if(req.files && req.files.avatar) {
+    if (req.files && req.files.avatar) {
       avatarFileName = await userRepository.uploadAvatar(req.files.avatar);
     }
 
-    res.send({ file: avatarFileName});
+    res.send({ file: avatarFileName });
 
-  }catch (err) {
+  } catch (err) {
     if (err.name === "ValidationError") {
       err.status = 400;
     }

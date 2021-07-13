@@ -118,12 +118,15 @@ async function registerToHackaton(req, res) {
 
     await hackatonRepository.registerToHackaton(userId, hackatonId, codigoReserva);
     
-    res.send({ codigoReserva: codigoReserva});
+    res.send({ 
+      codigoReserva: codigoReserva,
+      mensaje: 'Te has subscrito con éxito!'
+    });
 
   }catch(err){
     console.log(err);
     res.status(err.status || 500);
-    res.json({ err: err.message})
+    res.json({ err: 'Ya estás registrado a este hackathon.'})
   }
 }
 

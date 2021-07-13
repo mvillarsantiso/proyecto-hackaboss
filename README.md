@@ -6,4 +6,4 @@ It will have various parts:
 
   Database (DONE)
   Back-end (DONE)
-  Front-end (In development - React based api)
+  In development - (React based api). I'm currently trying to simulate how it would be to adapt the project already done to a template provided by a client.
